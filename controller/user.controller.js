@@ -11,7 +11,7 @@ userController.createUser = async (req, res) => {
     // 기존 유저인지 확인
     const user = await User.findOne({ email }); // findOne({email: email})와 같은 의미
     if (user) {
-      throw new Error("이미 가입이 된 유저입니다.");
+      throw new Error("이미 가입된 유저입니다.");
     }
     const salt = bcrypt.genSaltSync(saltRounds);
     const hash = bcrypt.hashSync(password, salt);
@@ -19,7 +19,7 @@ userController.createUser = async (req, res) => {
     await newUser.save();
     res.status(200).json({ status: "success" });
   } catch (error) {
-    res.status(400).json({ status: "fail", error });
+    res.status(400).json({ status: "fail", message: error.message });
   }
 };
 
@@ -41,7 +41,7 @@ userController.loginWithEmail = async (req, res) => {
     }
     throw new Error("아이디 또는 비밀번호가 일치하지 않습니다.");
   } catch (error) {
-    res.status(400).json({ status: "fail", error });
+    res.status(400).json({ status: "fail", message: error.message });
   }
 };
 
