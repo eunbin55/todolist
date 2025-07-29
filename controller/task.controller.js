@@ -6,7 +6,8 @@ const taskController = {};
 taskController.createTask = async (req, res) => {
   try {
     const { task, isComplete } = req.body;
-    const newTask = new Task({ task, isComplete });
+    const { userId } = req;
+    const newTask = new Task({ task, isComplete, author: userId });
     await newTask.save();
     res.status(200).json({ status: "ok", data: newTask });
   } catch (err) {
@@ -15,9 +16,10 @@ taskController.createTask = async (req, res) => {
 };
 
 // 할 일 조회
-taskController.getTask = async (req, res) => {
+taskController.getTasks = async (req, res) => {
   try {
-    const taskList = await Task.find({}).select("-__v");
+    // populate -> 몽구스에서 제공하는 조인 함수
+    const taskList = await Task.find({}).populate("author").select("-__v");
     res.status(200).json({ status: "ok", data: taskList });
   } catch (err) {
     res.status(400).json({ status: "fail", error: err });
